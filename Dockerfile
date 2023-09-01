@@ -7,7 +7,6 @@ COPY vite.config.ts .
 COPY tsconfig.json .
 COPY tsconfig.node.json .
 
-RUN npm install -g @vue/cli
 RUN npm install -g pnpm
 RUN pnpm install
 
