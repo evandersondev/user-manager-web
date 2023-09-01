@@ -2,8 +2,31 @@
 import { Pencil } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import Header from '../components/Header.vue'
+import { onMounted, reactive } from 'vue';
+import axios from 'axios';
 
 const router = useRouter()
+
+interface User {
+  id: string
+  name: string
+  email: string
+  photoUrl: string
+  role: string
+}
+
+let users: User[] = reactive([])
+
+onMounted(async () => {
+  const token = localStorage.getItem('@user-manager:token')
+  const response = await axios.get<User[]>('http://localhost:3000/users', {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+
+  users.push(...response.data)
+})
 
 function handleEditUser(id: string) {
   router.push({ path: `/edit/${id}` })
@@ -13,29 +36,31 @@ function handleEditUser(id: string) {
 <template>
   <Header />
 
-  <div class="bg-white w-full max-w-6xl flex flex-col items-center lg:p-12 p-8 space-y-16 mx-auto pb-40">
+  <div class="flex flex-col items-center w-full max-w-6xl p-8 pb-40 mx-auto space-y-16 bg-white lg:p-12">
     <div class="text-center">
-      <h1 class="text-4xl font-bold tracking-tight text-zinc-800 mb-6">Our users</h1>
-      <p class="text-center text-xl text-zinc-600">Here is the list of all registered users.</p>
+      <h1 class="mb-6 text-4xl font-bold tracking-tight text-zinc-800">Our users</h1>
+      <p class="text-xl text-center text-zinc-600">Here is the list of all registered users.</p>
     </div>
 
-    <div class="w-full flex flex-wrap justify-center gap-12">
+    <div class="flex flex-wrap justify-center w-full gap-12">
 
 
-      <div class="flex flex-col justify-center">
-        <div class="flex relative group">
-          <button @click="handleEditUser('1243')"
-            class="absolute z-10 group-hover:opacity-100 transition-opacity right-4 top-4 text-zinc-50 opacity-30">
+      <div :key="user.id" v-for="user in users" class="flex flex-col justify-center">
+        <div class="relative flex group">
+          <button @click="handleEditUser(user.id)"
+            class="absolute z-10 transition-opacity group-hover:opacity-100 right-4 top-4 text-zinc-50 opacity-30">
             <Pencil :size="22" />
           </button>
-          <img class="h-52 w-80 object-cover rounded-3xl mb-4" src="https://github.com/evandersondev.png" />
+          <img class="object-cover mb-4 h-52 w-80 rounded-3xl"
+            :src="user.photoUrl ?? 'https://fakeimg.pl/600x400?text=No+photo+URL&font=bebas'" />
         </div>
-        <span class="font-medium text-lg leading-6">Diego Fernandes</span>
-        <div class="flex justify-between items-baseline">
-          <span class="text-zinc-400 text-sm">diego3g@gmail.com</span>
-          <span class="text-zinc-950 font-medium text-sm uppercase">owner</span>
+        <span class="text-lg font-medium leading-6">{{ user.name }}</span>
+        <div class="flex items-baseline justify-between">
+          <span class="text-sm text-zinc-400">{{ user.email }}</span>
+          <span class="text-sm font-medium uppercase text-zinc-950">{{ user.role }}</span>
         </div>
       </div>
+
 
     </div>
   </div>
