@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Pencil } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
+import Header from '../components/Header.vue'
 
 const router = useRouter()
 
@@ -10,6 +11,8 @@ function handleEditUser(id: string) {
 </script>
 
 <template>
+  <Header />
+
   <div class="bg-white w-full max-w-6xl flex flex-col items-center lg:p-12 p-8 space-y-16 mx-auto pb-40">
     <div class="text-center">
       <h1 class="text-4xl font-bold tracking-tight text-zinc-800 mb-6">Our users</h1>
