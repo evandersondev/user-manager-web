@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { Pencil } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
 
-function handleEditUser() {
-  console.log('Edit')
+const router = useRouter()
+
+function handleEditUser(id: string) {
+  router.push({ path: `/edit/${id}` })
 }
 </script>
 
@@ -18,7 +21,7 @@ function handleEditUser() {
 
       <div class="flex flex-col justify-center">
         <div class="flex relative group">
-          <button @click="handleEditUser"
+          <button @click="handleEditUser('1243')"
             class="absolute z-10 group-hover:opacity-100 transition-opacity right-4 top-4 text-zinc-50 opacity-30">
             <Pencil :size="22" />
           </button>

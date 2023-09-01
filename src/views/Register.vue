@@ -22,7 +22,7 @@ function hanldeRegisterSubmit() {
       <h1 class="text-5xl font-bold tracking-tight text-zinc-800 mb-4">Sign up</h1>
       <div class="h-20 w-20 rounded-full shadow-sm overflow-hidden bg-zinc-100 flex items-center justify-center">
         <img v-if="newUser.photoUrl" class="h-full w-full object-cover" :src="newUser.photoUrl" />
-        <Image v-else class="text-zinc-500 text-xl" />
+        <Image v-else class="text-zinc-400 text-xl" />
       </div>
 
     </div>
