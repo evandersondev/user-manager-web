@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
@@ -9,8 +9,8 @@ function hanldeLoginSubmit() {
 </script>
 
 <template>
-  <div class="h-screen w-full flex flex-col space-y-8 justify-center items-center">
-    <div class="flex flex-col items-center gap-2">
+  <div class="h-screen w-full flex flex-col justify-center items-center">
+    <div class="flex flex-col items-center gap-2 mb-8">
       <h1 class="text-5xl font-bold tracking-tight text-zinc-800">Sign in</h1>
       <h3 class="text-zinc-500 text-xl">Hello, Welcome back!</h3>
     </div>
@@ -23,5 +23,9 @@ function hanldeLoginSubmit() {
         class="h-12 w-full rounded bg-emerald-500 text-zinc-50 font-semibold outline-0 focus:ring-2 focus:ring-emerald-500"
         type="submit">ENTER</button>
     </form>
+    <div class="flex gap-1 text-sm">
+      <p>Don't have an account?</p>
+      <router-link class="text-emerald-500 font-medium" to="/register">Register here.</router-link>
+    </div>
   </div>
 </template>
