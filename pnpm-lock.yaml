@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  lucide-vue-next:
+    specifier: ^0.274.0
+    version: 0.274.0(vue@3.3.4)
   vue:
     specifier: ^3.3.4
     version: 3.3.4
@@ -757,6 +760,14 @@ packages:
     dependencies:
       yallist: 4.0.0
     dev: true
+
+  /lucide-vue-next@0.274.0(vue@3.3.4):
+    resolution: {integrity: sha512-n8qfl0mM1meFt5l/CiBdoLAzl47Zq6kZVQYLQH7LYtAOHab5bFbzmT52OeaBH4G+2LMWHiNlenUHaf9M+y3TFA==}
+    peerDependencies:
+      vue: '>=3.0.1'
+    dependencies:
+      vue: 3.3.4
+    dev: false
 
   /magic-string@0.30.3:
     resolution: {integrity: sha512-B7xGbll2fG/VjP+SWg4sX3JynwIU0mjoTc6MPpKNuIvftk6u6vqhDnk1R80b8C2GBR6ywqy+1DcKBrevBg+bmw==}
