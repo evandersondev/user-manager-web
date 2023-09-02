@@ -9,12 +9,6 @@ export interface User {
   role: string
 }
 
-interface FieldUser {
-  user: User
-  fieldName: 'name' | 'photoUrl' | 'role'
-  value: string
-}
-
 interface State {
   users?: User[]
   user: User

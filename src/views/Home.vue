@@ -47,7 +47,8 @@ function handleEditUser(id: string) {
             <Trash :size="22" />
           </button>
 
-          <button v-if="(currentUser.role !== 'employee' || currentUser.id === user.id) && user.role !== 'owner'"
+          <button
+            v-if="currentUser.role === 'owner' || ((currentUser.role === 'employee' && user.id === currentUser.id) || (currentUser.role !== 'employee' && user.role !== 'owner'))"
             @click="handleEditUser(user.id)"
             class="absolute z-10 transition-opacity group-hover:opacity-100 right-4 top-4 hover:text-emerald-500 text-zinc-50 opacity-30">
             <Pencil :size="22" />
