@@ -3,28 +3,29 @@ import { Pencil, Trash } from 'lucide-vue-next';
 import { useRouter } from 'vue-router';
 import { computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import { User } from '@/stories/user';
+import { socketConnection } from '@/services/socket-io';
+
 import Header from '../components/Header.vue';
 
 const router = useRouter();
 const store = useStore();
 
-interface User {
-  id: string
-  name: string
-  email: string
-  photoUrl: string
-  role: string
-}
-
 const users = computed(() => store.state.users as User[]);
 const currentUser = computed(() => JSON.parse(localStorage.getItem('@user-manager:current-user')!));
 
+const socket = socketConnection();
+
 onMounted(() => {
   store.dispatch('loadUsers');
+
+  socket.on('update-users', () => {
+    store.dispatch('loadUsers');
+  });
 });
 
 function handleEditUser(id: string) {
-  router.push({ path: `/edit/${id}` });
+  router.push({ path: `/edit/${id}`, state: { socket: socket.value } });
 }
 </script>
 

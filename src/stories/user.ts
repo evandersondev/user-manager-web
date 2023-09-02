@@ -2,7 +2,7 @@ import axios from 'axios';
 import { createStore } from 'vuex';
 
 export interface User {
-  id?: string
+  id: string
   name: string
   email: string
   photoUrl: string
@@ -14,7 +14,7 @@ interface State {
   user: User
 }
 
-export const userStore = createStore<State>({
+export const store = createStore<State>({
   state: {
     users: [],
     user: {

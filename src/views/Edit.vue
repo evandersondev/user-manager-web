@@ -6,12 +6,15 @@ import {
 import { Image } from 'lucide-vue-next';
 import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
-import { User } from '@/stories/users';
+import { User } from '@/stories/user';
+import { socketConnection } from '@/services/socket-io';
 
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
 const { id } = route.params;
+
+const socket = socketConnection();
 
 const user = computed(() => store.state.user as User);
 const currentUser = computed(() => JSON.parse(localStorage.getItem('@user-manager:current-user')!));
@@ -21,10 +24,12 @@ onMounted(() => {
 });
 
 async function hanldeUpdateUserSubmit() {
+  socket.emit('users');
   await store.dispatch('editUser', { ...user.value, id });
 
   router.push({ path: '/home' });
 }
+
 </script>
 
 <template>

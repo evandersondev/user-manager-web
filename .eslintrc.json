@@ -15,6 +15,7 @@
     "max-len": "off",
     "import/prefer-default-export": "off",
     "vuejs-accessibility/form-control-has-label": "off",
-    "@typescript-eslint/no-non-null-assertion": "off"
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "no-console": "off"
   }
 }
