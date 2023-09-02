@@ -1,22 +1,23 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { reactive } from 'vue';
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
 
-const router = useRouter()
+const router = useRouter();
 
 const login = reactive({
   email: '',
-  password: ''
-})
+  password: '',
+});
 
 async function hanldeLoginSubmit() {
-  const response = await axios.post('http://localhost:3000/session', { ...login })
+  const response = await axios.post('http://localhost:3000/session', { ...login });
 
   if (response.status === 201) {
-    console.log(response.data.access_token)
-    localStorage.setItem('@user-manager:token', response.data.access_token)
-    router.push({ path: '/home' })
+    localStorage.setItem('@user-manager:token', response.data.access_token);
+    localStorage.setItem('@user-manager:current-user', JSON.stringify({ ...response.data.user }));
+
+    router.push({ path: '/home' });
   }
 }
 </script>

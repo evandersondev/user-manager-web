@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
-import { Image } from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
+import { reactive } from 'vue';
+import { Image } from 'lucide-vue-next';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
-const router = useRouter()
+const router = useRouter();
 
 const user = reactive({
   name: '',
   email: '',
   password: '',
   photoUrl: '',
-  role: 'employee'
-})
+  role: 'employee',
+});
 
 async function hanldeRegisterSubmit() {
-  const response = await axios.post('http://localhost:3000/users', { ...user })
+  const response = await axios.post('http://localhost:3000/users', { ...user });
 
   if (response.status === 201) {
-    router.push({ path: '/' })
+    router.push({ path: '/' });
   }
 }
 </script>
@@ -28,7 +28,7 @@ async function hanldeRegisterSubmit() {
     <div class="flex flex-col items-center gap-2 mb-8">
       <h1 class="mb-4 text-5xl font-bold tracking-tight text-zinc-800">Sign up</h1>
       <div class="flex items-center justify-center w-20 h-20 overflow-hidden rounded-full shadow-sm bg-zinc-100">
-        <img v-if="user.photoUrl" class="object-cover w-full h-full" :src="user.photoUrl" />
+        <img v-if="user.photoUrl" class="object-cover w-full h-full" :src="user.photoUrl" :alt="user.name" />
         <Image v-else class="text-xl text-zinc-400" />
       </div>
 

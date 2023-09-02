@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { Pencil } from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
-import Header from '../components/Header.vue'
-import { onMounted, reactive } from 'vue';
-import axios from 'axios';
+import { Pencil, Trash } from 'lucide-vue-next';
+import { useRouter } from 'vue-router';
+import { computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import Header from '../components/Header.vue';
 
-const router = useRouter()
+const router = useRouter();
+const store = useStore();
 
 interface User {
   id: string
@@ -15,21 +16,15 @@ interface User {
   role: string
 }
 
-let users: User[] = reactive([])
+const users = computed(() => store.state.users as User[]);
+const currentUser = computed(() => JSON.parse(localStorage.getItem('@user-manager:current-user')!));
 
-onMounted(async () => {
-  const token = localStorage.getItem('@user-manager:token')
-  const response = await axios.get<User[]>('http://localhost:3000/users', {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  })
-
-  users.push(...response.data)
-})
+onMounted(() => {
+  store.dispatch('loadUsers');
+});
 
 function handleEditUser(id: string) {
-  router.push({ path: `/edit/${id}` })
+  router.push({ path: `/edit/${id}` });
 }
 </script>
 
@@ -44,15 +39,21 @@ function handleEditUser(id: string) {
 
     <div class="flex flex-wrap justify-center w-full gap-12">
 
-
       <div :key="user.id" v-for="user in users" class="flex flex-col justify-center">
         <div class="relative flex group">
-          <button @click="handleEditUser(user.id)"
-            class="absolute z-10 transition-opacity group-hover:opacity-100 right-4 top-4 text-zinc-50 opacity-30">
+          <button v-if="currentUser.id !== user.id && currentUser.role !== 'employee' && user.role !== 'owner'"
+            @click="handleEditUser(user.id)"
+            class="absolute z-10 transition-opacity group-hover:opacity-100 right-4 top-14 hover:text-rose-500 text-zinc-50 opacity-30">
+            <Trash :size="22" />
+          </button>
+
+          <button v-if="(currentUser.role !== 'employee' || currentUser.id === user.id) && user.role !== 'owner'"
+            @click="handleEditUser(user.id)"
+            class="absolute z-10 transition-opacity group-hover:opacity-100 right-4 top-4 hover:text-emerald-500 text-zinc-50 opacity-30">
             <Pencil :size="22" />
           </button>
           <img class="object-cover mb-4 h-52 w-80 rounded-3xl"
-            :src="user.photoUrl ?? 'https://fakeimg.pl/600x400?text=No+photo+URL&font=bebas'" />
+            :src="user.photoUrl || 'https://fakeimg.pl/600x400?text=No+photo+URL&font=bebas'" :alt="user.name" />
         </div>
         <span class="text-lg font-medium leading-6">{{ user.name }}</span>
         <div class="flex items-baseline justify-between">
@@ -60,7 +61,6 @@ function handleEditUser(id: string) {
           <span class="text-sm font-medium uppercase text-zinc-950">{{ user.role }}</span>
         </div>
       </div>
-
 
     </div>
   </div>

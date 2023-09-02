@@ -1,8 +1,8 @@
-import {createRouter, createWebHistory} from 'vue-router'
-import Login from './views/Login.vue'
-import Home from './views/Home.vue'
-import Register from './views/Register.vue'
-import Edit from './views/Edit.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import Login from './views/Login.vue';
+import Home from './views/Home.vue';
+import Register from './views/Register.vue';
+import Edit from './views/Edit.vue';
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -10,26 +10,26 @@ export const router = createRouter({
     {
       path: '/',
       components: {
-        default: Login
-      }
+        default: Login,
+      },
     },
     {
       path: '/register',
       components: {
-        default: Register
-      }
+        default: Register,
+      },
     },
     {
       path: '/home',
       components: {
-        default: Home
-      }
+        default: Home,
+      },
     },
     {
       path: '/edit/:id',
       components: {
-        default: Edit
-      }
-    }
-  ]
-})
+        default: Edit,
+      },
+    },
+  ],
+});
