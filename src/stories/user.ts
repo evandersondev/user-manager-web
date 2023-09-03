@@ -25,7 +25,7 @@ export const store = createStore<State>({
     users: [],
     user: {
       id: '',
-      name: 'edeced',
+      name: '',
       email: '',
       photoUrl: '',
       role: '',

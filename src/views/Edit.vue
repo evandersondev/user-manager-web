@@ -7,6 +7,9 @@ import {
 import { Image, Trash } from 'lucide-vue-next';
 import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
+import { toast } from 'vue3-toastify';
+import { useVuelidate } from '@vuelidate/core';
+import { required, url, minLength } from '@vuelidate/validators';
 import { User } from '@/stories/user';
 import { socketConnection } from '@/services/socket-io';
 
@@ -20,6 +23,14 @@ const socket = ref();
 const user = computed(() => store.state.user as User);
 const usersOnline = computed(() => store.state.usersOnline as string[]);
 const currentUser = computed(() => JSON.parse(localStorage.getItem('@user-manager:current-user')!));
+const isValidImage = ref(true);
+
+const rules = {
+  name: { required, minLength: minLength(3) },
+  photoUrl: { url },
+};
+
+const v$ = useVuelidate(rules, user);
 
 onMounted(() => {
   store.dispatch('loadUser', id);
@@ -28,19 +39,69 @@ onMounted(() => {
 });
 
 async function hanldeUpdateUserSubmit() {
-  socket.value.emit('users');
-  localStorage.setItem('@user-manager:current-user', JSON.stringify({ ...user.value, id }));
-  await store.dispatch('editUser', { ...user.value, id });
+  if (v$.value.name.$error || v$.value.photoUrl.$error) {
+    toast('Some field with error, Please check again!', {
+      toastStyle: {
+        backgroundColor: '#be123c',
+      },
+    });
+    return;
+  }
 
-  router.push({ path: '/home' });
+  try {
+    await store.dispatch('editUser', { ...user.value, id });
+
+    socket.value.emit('users');
+    localStorage.setItem('@user-manager:current-user', JSON.stringify({ ...user.value, id }));
+
+    router.push({ path: '/home' });
+
+    toast('User updated with success!', {
+      toastStyle: {
+        backgroundColor: '#059669',
+      },
+    });
+  } catch (error) {
+    toast('Update user failed!', {
+      toastStyle: {
+        backgroundColor: '#be123c',
+      },
+    });
+  }
 }
 
 async function hanldeDeleteUserSubmit() {
-  socket.value.emit('users');
-  await store.dispatch('deleteUser', id);
+  try {
+    await store.dispatch('deleteUser', id);
+    socket.value.emit('users');
 
-  router.push({ path: '/home' });
+    router.push({ path: '/home' });
+
+    toast('User deleted with success!', {
+      toastStyle: {
+        backgroundColor: '#059669',
+      },
+    });
+  } catch (error) {
+    toast('Delete user failed!', {
+      toastStyle: {
+        backgroundColor: '#be123c',
+      },
+    });
+  }
 }
+
+function updateImage(event: Event) {
+  const img = document.createElement('img');
+  img.src = (event.target as HTMLInputElement).value;
+  img.onload = () => {
+    isValidImage.value = true;
+  };
+  img.onerror = () => {
+    isValidImage.value = false;
+  };
+}
+
 </script>
 
 <template>
@@ -56,28 +117,28 @@ async function hanldeDeleteUserSubmit() {
           </div>
         </div>
 
-        <img v-if="user.photoUrl" class="object-cover rounded-full" :src="user.photoUrl" :alt="user.name" />
-        <Image v-else class=" text-zinc-400" :size="32" />
+        <img v-if="isValidImage" class="object-cover rounded-full" :src="user.photoUrl" :alt="user.name" />
+        <Image class=" text-zinc-400" :size="32" />
 
       </div>
 
     </div>
     <form class="flex flex-col w-full max-w-sm gap-4">
 
-      <input
+      <input :data-error="v$.name.$error"
         :data-disabled="user.role === 'owner' && currentUser.role !== 'owner' || currentUser.email !== user.email && currentUser.role === 'employee'"
         :disabled="user.role === 'owner' && currentUser.role !== 'owner' || currentUser.email !== user.email && currentUser.role === 'employee'"
-        v-model="user.name"
-        class="w-full h-12 px-6 rounded text-zinc-50 placeholder:text-zinc-100 data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />
+        v-model="v$.name.$model"
+        class="w-full h-12 px-6 rounded data-[error=true]:focus:ring-rose-500 text-zinc-50 placeholder:text-zinc-100 data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />
 
       <input disabled v-model="user.email"
         class="w-full h-12 px-6 rounded opacity-50 cursor-not-allowed text-zinc-50 placeholder:text-zinc-100 bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />
 
-      <input
+      <input @input="updateImage" :data-error="v$.photoUrl.$error"
         :data-disabled="user.role === 'owner' && currentUser.role !== 'owner' || currentUser.email !== user.email && currentUser.role === 'employee'"
         :disabled="user.role === 'owner' && currentUser.role !== 'owner' || currentUser.email !== user.email && currentUser.role === 'employee'"
-        v-model="user.photoUrl" placeholder="Photo URl"
-        class="w-full h-12 px-6 rounded text-zinc-50 data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed placeholder:text-zinc-100 bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />
+        v-model="v$.photoUrl.$model" placeholder="Photo URl"
+        class="w-full h-12 px-6 data-[error=true]:focus:ring-rose-500 rounded text-zinc-50 data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed placeholder:text-zinc-100 bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />
 
       <select
         :data-disabled="user.role === 'owner' && currentUser.role !== 'owner' || currentUser.email !== user.email && currentUser.role === 'employee'"
