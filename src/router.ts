@@ -60,8 +60,6 @@ router.beforeEach(async (to, from, next) => {
     } else {
       next({ name: 'login' });
     }
-  } else if (token && await verifyToken(token)) {
-    next({ name: 'home' });
   } else {
     next();
   }

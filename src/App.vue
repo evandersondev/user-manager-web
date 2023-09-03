@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <div class="h-full w-full antialiased bg-white text-zinc-900">
+  <div class="w-full h-screen antialiased bg-zinc-900 text-zinc-50">
     <router-view />
   </div>
 </template>

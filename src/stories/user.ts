@@ -9,9 +9,15 @@ export interface User {
   role: string
 }
 
+export interface Online {
+  id: string
+  userEmail: string
+}
+
 interface State {
   users?: User[]
   user: User
+  usersOnline: string[]
 }
 
 export const store = createStore<State>({
@@ -24,6 +30,7 @@ export const store = createStore<State>({
       photoUrl: '',
       role: '',
     },
+    usersOnline: [],
   },
   mutations: {
     loadUsers(state, users: User[]) {
@@ -43,6 +50,9 @@ export const store = createStore<State>({
     },
     deleteUser(state, id: string) {
       state.users = state.users?.filter((user) => user.id !== id);
+    },
+    loadUsersOnline(state, emails: string[]) {
+      state.usersOnline = emails;
     },
   },
   actions: {
@@ -89,6 +99,12 @@ export const store = createStore<State>({
       });
 
       commit('deleteUser', id);
+    },
+    async loadUsersOnline({ commit }) {
+      const response = await axios.get<Online[]>('http://localhost:3000/events');
+      const emails = response.data.map((item) => item.userEmail) as string[];
+
+      commit('loadUsersOnline', emails);
     },
   },
 });

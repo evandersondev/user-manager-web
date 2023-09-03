@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { Image } from 'lucide-vue-next';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { socketConnection } from '@/services/socket-io';
 
 const router = useRouter();
+const socket = ref();
 
 const user = reactive({
   name: '',
@@ -14,10 +16,15 @@ const user = reactive({
   role: 'employee',
 });
 
+onMounted(() => {
+  socket.value = socketConnection();
+});
+
 async function hanldeRegisterSubmit() {
   const response = await axios.post('http://localhost:3000/users', { ...user });
 
   if (response.status === 201) {
+    socket.value.emit('users');
     router.push({ path: '/' });
   }
 }
@@ -36,19 +43,19 @@ async function hanldeRegisterSubmit() {
     <form @submit.prevent="hanldeRegisterSubmit()" class="flex flex-col w-full max-w-sm gap-4">
 
       <input v-model="user.name" placeholder="Name"
-        class="w-full h-12 px-6 rounded text-zinc-800 placeholder:text-zinc-400 bg-zinc-50 outline-0 focus:ring-2 focus:ring-emerald-500" />
+        class="w-full h-12 px-6 rounded text-zinc-50 placeholder:text-zinc-100 bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />
 
       <input v-model="user.email" type="email" placeholder="E-mail"
-        class="w-full h-12 px-6 rounded text-zinc-800 placeholder:text-zinc-400 bg-zinc-50 outline-0 focus:ring-2 focus:ring-emerald-500" />
+        class="w-full h-12 px-6 rounded text-zinc-50 placeholder:text-zinc-100 bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />
 
       <input v-model="user.password" type="password" placeholder="Password"
-        class="w-full h-12 px-6 rounded text-zinc-800 placeholder:text-zinc-400 bg-zinc-50 outline-0 focus:ring-2 focus:ring-emerald-500" />
+        class="w-full h-12 px-6 rounded text-zinc-50 placeholder:text-zinc-100 bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />
 
       <input v-model="user.photoUrl" placeholder="Photo URl"
-        class="w-full h-12 px-6 rounded text-zinc-800 placeholder:text-zinc-400 bg-zinc-50 outline-0 focus:ring-2 focus:ring-emerald-500" />
+        class="w-full h-12 px-6 rounded text-zinc-50 placeholder:text-zinc-100 bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />
 
       <select v-model="user.role" placeholder="Role"
-        class="w-full h-12 px-6 rounded text-zinc-800 placeholder:text-zinc-400 bg-zinc-50 outline-0 focus:ring-2 focus:ring-emerald-500">
+        class="w-full h-12 px-6 rounded text-zinc-50 placeholder:text-zinc-100 bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500">
         <option value="employee">EMPLOYEE</option>
         <option value="admin">ADMIN</option>
         <option value="owner">OWNER</option>
@@ -58,7 +65,7 @@ async function hanldeRegisterSubmit() {
         class="w-full h-12 font-semibold rounded bg-emerald-500 text-zinc-50 outline-0 focus:ring-2 focus:ring-emerald-500"
         type="submit">REGISTER</button>
     </form>
-    <div class="flex gap-1 text-sm">
+    <div class="flex gap-1 mt-8 text-sm">
       <p>You have an account?</p>
       <router-link class="font-medium text-emerald-500" to="/">Sign in here.</router-link>
     </div>
