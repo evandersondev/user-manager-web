@@ -3,6 +3,9 @@ import { onMounted, reactive, ref } from 'vue';
 import { Image } from 'lucide-vue-next';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { useVuelidate } from '@vuelidate/core';
+import { required, email, minLength } from '@vuelidate/validators';
+import { toast } from 'vue3-toastify';
 import { socketConnection } from '@/services/socket-io';
 
 const router = useRouter();
@@ -16,16 +19,45 @@ const user = reactive({
   role: 'employee',
 });
 
+const rules = {
+  name: { required, minLength: minLength(3) },
+  email: { required, email },
+  password: { required, minLength: minLength(3) },
+};
+
+const v$ = useVuelidate(rules, user);
+
 onMounted(() => {
   socket.value = socketConnection();
 });
 
 async function hanldeRegisterSubmit() {
-  const response = await axios.post('http://localhost:3000/users', { ...user });
+  if (v$.value.name.$error || v$.value.email.$error) {
+    toast('Some field with error, Please check again!', {
+      toastStyle: {
+        backgroundColor: '#be123c',
+      },
+    });
+    return;
+  }
 
-  if (response.status === 201) {
+  try {
+    await axios.post('http://localhost:3000/users', { ...user });
+
     socket.value.emit('users');
     router.push({ path: '/' });
+
+    toast('User created with success!', {
+      toastStyle: {
+        backgroundColor: '#059669',
+      },
+    });
+  } catch (error) {
+    toast('Created user failed!', {
+      toastStyle: {
+        backgroundColor: '#be123c',
+      },
+    });
   }
 }
 </script>
@@ -42,14 +74,14 @@ async function hanldeRegisterSubmit() {
     </div>
     <form @submit.prevent="hanldeRegisterSubmit()" class="flex flex-col w-full max-w-sm gap-4">
 
-      <input v-model="user.name" placeholder="Name"
-        class="w-full h-12 px-6 rounded text-zinc-50 placeholder:text-zinc-100 bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />
+      <input :data-error="v$.name.$error" v-model="v$.name.$model" placeholder="Name"
+        class="w-full h-12 px-6 data-[error=true]:focus:ring-rose-500 rounded text-zinc-50 placeholder:text-zinc-100 bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />
 
-      <input v-model="user.email" type="email" placeholder="E-mail"
-        class="w-full h-12 px-6 rounded text-zinc-50 placeholder:text-zinc-100 bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />
+      <input :data-error="v$.email.$error" v-model="v$.email.$model" type="email" placeholder="E-mail"
+        class="w-full h-12 px-6 rounded data-[error=true]:focus:ring-rose-500 text-zinc-50 placeholder:text-zinc-100 bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />
 
-      <input v-model="user.password" type="password" placeholder="Password"
-        class="w-full h-12 px-6 rounded text-zinc-50 placeholder:text-zinc-100 bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />
+      <input :data-error="v$.password.$error" v-model="v$.password.$model" type="password" placeholder="Password"
+        class="w-full h-12 px-6 rounded data-[error=true]:focus:ring-rose-500 text-zinc-50 placeholder:text-zinc-100 bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />
 
       <input v-model="user.photoUrl" placeholder="Photo URl"
         class="w-full h-12 px-6 rounded text-zinc-50 placeholder:text-zinc-100 bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />

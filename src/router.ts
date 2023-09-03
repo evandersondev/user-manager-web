@@ -12,11 +12,13 @@ const router = createRouter({
       path: '/',
       name: 'login',
       component: Login,
+
     },
     {
       path: '/register',
       name: 'register',
       component: Register,
+
     },
     {
       path: '/home',
@@ -37,32 +39,36 @@ const router = createRouter({
   ],
 });
 
-async function verifyToken(token: string) {
-  if (token) {
-    const response = await axios.get('http://localhost:3000/session/verify', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+async function verifyToken() {
+  const token = localStorage.getItem('@user-manager:token');
 
-    return !!response.data;
+  if (token) {
+    try {
+      const response = await axios.get('http://localhost:3000/session/verify', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return !!response.data;
+    } catch (error) {
+      return false;
+    }
   }
 
   return false;
 }
 
-router.beforeEach(async (to, from, next) => {
-  const token = localStorage.getItem('@user-manager:token');
-
-  if (to.meta.auth && token) {
-    if (await verifyToken(token)) {
+router.beforeResolve(async (to, _, next) => {
+  if (to.meta.auth) {
+    if (await verifyToken()) {
       next();
     } else {
-      next({ name: 'login' });
+      next('/');
     }
   } else {
     next();
   }
 });
 
-export { router };
+export default router;
