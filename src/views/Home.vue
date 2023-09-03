@@ -49,17 +49,17 @@ function handleLogout() {
 <template>
   <Header :handleLogout="handleLogout" />
 
-  <div class="flex flex-col items-center w-full h-full p-8 pb-40 mx-auto space-y-16 max-w-7xl bg-zinc-900 lg:p-12">
+  <div class="flex flex-col items-center w-full h-full px-10 py-20 mx-auto space-y-16 max-w-7xl bg-zinc-900 sm:p-12">
     <div class="text-center">
       <h1 class="mb-6 text-4xl font-bold tracking-tight">Our users</h1>
       <p class="text-xl text-center text-zinc-400">Here is the list of all registered users.</p>
     </div>
 
-    <div class="flex flex-wrap justify-center w-full gap-6">
+    <div class="grid w-full grid-cols-1 gap-6 grid-flow-dense sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 
-      <div :key="user.id" v-for="user in users" class="flex flex-col justify-center">
+      <div :key="user.id" v-for="user in users" class="flex flex-col justify-center w-full max-w-xs mx-auto">
         <button @click="handleEditUser(user.id)"
-          class="relative flex flex-col items-center py-8 transition-shadow border shadow-lg border-zinc-950/20 shadow-zinc-950/20 bg-zinc-900 hover:shadow-inner h-80 w-72 rounded-3xl">
+          class="relative flex flex-col items-center w-full py-8 transition-shadow border shadow-lg border-zinc-950/20 shadow-zinc-950/20 bg-zinc-900 hover:shadow-inner h-80 rounded-3xl">
 
           <div :data-online="usersOnline.includes(user.email)"
             class="absolute flex items-center justify-center w-10 h-6 text-xs rounded left-4 top-4 data-[online=true]:bg-emerald-600 bg-rose-600 text-zinc-50">
