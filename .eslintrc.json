@@ -16,6 +16,9 @@
     "import/prefer-default-export": "off",
     "vuejs-accessibility/form-control-has-label": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
-    "no-console": "off"
+    "no-console": "off",
+    "no-param-reassign": "off",
+    "no-mixed-operators": "off",
+    "vue/valid-define-props": "off"
   }
 }

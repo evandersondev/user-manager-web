@@ -32,7 +32,7 @@ onMounted(() => {
 });
 
 async function hanldeRegisterSubmit() {
-  if (v$.value.name.$error || v$.value.email.$error) {
+  if (v$.value.name.$error || v$.value.email.$error || v$.value.password.$error) {
     toast('Some field with error, Please check again!', {
       toastStyle: {
         backgroundColor: '#be123c',
@@ -65,14 +65,14 @@ async function hanldeRegisterSubmit() {
 <template>
   <div class="flex flex-col items-center justify-center w-full h-screen">
     <div class="flex flex-col items-center gap-2 mb-8">
-      <h1 class="mb-4 text-5xl font-bold tracking-tight text-zinc-800">Sign up</h1>
+      <h1 class="mb-4 text-5xl font-bold tracking-tight">Sign up</h1>
       <div class="flex items-center justify-center w-20 h-20 overflow-hidden rounded-full shadow-sm bg-zinc-100">
         <img v-if="user.photoUrl" class="object-cover w-full h-full" :src="user.photoUrl" :alt="user.name" />
         <Image v-else class="text-xl text-zinc-400" />
       </div>
 
     </div>
-    <form @submit.prevent="hanldeRegisterSubmit()" class="flex flex-col w-full max-w-sm gap-4">
+    <form @submit.prevent="hanldeRegisterSubmit" class="flex flex-col w-full max-w-sm gap-4">
 
       <input :data-error="v$.name.$error" v-model="v$.name.$model" placeholder="Name"
         class="w-full h-12 px-6 data-[error=true]:focus:ring-rose-500 rounded text-zinc-50 placeholder:text-zinc-100 bg-zinc-800 outline-0 focus:ring-2 focus:ring-emerald-500" />
