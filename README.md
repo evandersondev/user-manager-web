@@ -36,6 +36,8 @@ USER MANAGER
 
 - You need installed Docker and Docker Compose in Container or running in local.
 
+- Also need to clone the backend project from [user-manager-server](https://github.com/evandersondev/user-manager-server).
+
 - In your terminal, run the steps:
 
 > `pnpm install` **for install the modules**.
