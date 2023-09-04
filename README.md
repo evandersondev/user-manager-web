@@ -5,17 +5,17 @@ USER MANAGER
 </h1>
 <br>
 <br>
-  <div style="display: flex; algin-items: center; justify-content:center; width: 100%;gap:16px;margin-bottom:16px;">
-    <img src="./src/assets/login.png" alt="YOUR_PROJECT_NAME" width="50%">
-    <img src="./src/assets/register.png" alt="YOUR_PROJECT_NAME" width="50%">
+  <div style="display: flex; algin-items: center; justify-content:center; width: 100%;gap:12px;margin-bottom:12px;">
+    <img src="./src/assets/login.png" alt="YOUR_PROJECT_NAME" width="40%">
+    <img src="./src/assets/register.png" alt="YOUR_PROJECT_NAME" width="40%">
   </div>
-  <div style="display: flex; algin-items: center; justify-content:center; width: 100%;gap:16px;margin-bottom:16px;">
-    <img src="./src/assets/home.png" alt="YOUR_PROJECT_NAME" width="50%">
-    <img src="./src/assets/online.png" alt="YOUR_PROJECT_NAME" width="50%">
+  <div style="display: flex; algin-items: center; justify-content:center; width: 100%;gap:12px;margin-bottom:12px;">
+    <img src="./src/assets/home.png" alt="YOUR_PROJECT_NAME" width="40%">
+    <img src="./src/assets/online.png" alt="YOUR_PROJECT_NAME" width="40%">
   </div>
-  <div style="display: flex; algin-items: center; justify-content:center; width: 100%;gap:16px;margin-bottom:16px;">
-    <img src="./src/assets/offline.png" alt="YOUR_PROJECT_NAME" width="50%">
-    <img src="./src/assets/realtime.png" alt="YOUR_PROJECT_NAME" width="50%">
+  <div style="display: flex; algin-items: center; justify-content:center; width: 100%;gap:12px;margin-bottom:12px;">
+    <img src="./src/assets/offline.png" alt="YOUR_PROJECT_NAME" width="40%">
+    <img src="./src/assets/realtime.png" alt="YOUR_PROJECT_NAME" width="40%">
   </div>
 
 <br>
