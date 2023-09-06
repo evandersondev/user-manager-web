@@ -1,5 +1,5 @@
 import { MutationTree } from 'vuex';
-import { State, User } from './state';
+import { Online, State, User } from './state';
 import { constants } from './constants';
 
 export const mutations: MutationTree<State> = {
@@ -21,7 +21,7 @@ export const mutations: MutationTree<State> = {
   [constants.DELETE_USER](state, id: string) {
     state.users = state.users?.filter((user) => user.id !== id);
   },
-  [constants.LOAD_USERS_ONLINE](state, emails: string[]) {
-    state.usersOnline = emails;
+  [constants.LOAD_USERS_ONLINE](state, users: Online[]) {
+    state.usersOnline = users;
   },
 };

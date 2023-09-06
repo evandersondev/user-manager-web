@@ -50,8 +50,7 @@ export const actions: ActionTree<State, State> = {
   },
   async [constants.LOAD_USERS_ONLINE]({ commit }) {
     const response = await axios.get<Online[]>('http://localhost:3000/events');
-    const emails = response.data.map((item) => item.userEmail) as string[];
 
-    commit(constants.LOAD_USERS_ONLINE, emails);
+    commit(constants.LOAD_USERS_ONLINE, response.data);
   },
 };

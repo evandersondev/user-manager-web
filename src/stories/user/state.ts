@@ -8,11 +8,12 @@ export interface User {
 
 export interface Online {
   id: string
-  userEmail: string
+  email: string
+  status: 'online' | 'absent'
 }
 
 export interface State {
   users?: User[]
   user: User
-  usersOnline: string[]
+  usersOnline: Online[]
 }
