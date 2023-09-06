@@ -3,7 +3,7 @@ import { useRouter } from 'vue-router';
 import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 import Card from '@/components/Card.vue';
-import { User } from '@/stories/user/state';
+import { User, Online } from '@/stories/user/state';
 import { constants } from '@/stories/user/constants';
 import { socketConnection } from '@/services/socket-io';
 
@@ -15,7 +15,7 @@ const store = useStore();
 const isTabActive = ref();
 
 const users = computed(() => store.state.users as User[]);
-const usersOnline = computed(() => store.state.usersOnline as string[]);
+const usersOnline = computed(() => store.state.usersOnline as Online[]);
 const currentUser = computed(() => JSON.parse(localStorage.getItem('@user-manager:current-user')!));
 
 const socket = socketConnection();
@@ -24,9 +24,9 @@ function handleVisibilityChange() {
   isTabActive.value = !document.hidden;
 
   if (isTabActive.value) {
-    socket.emit('users-online', currentUser.value.email);
+    socket.emit('users-absent', { email: currentUser.value.email, status: 'online' });
   } else {
-    setTimeout(() => socket.emit('users-offline', currentUser.value.email), 10000);
+    setTimeout(() => socket.emit('users-absent', { email: currentUser.value.email, status: 'absent' }), 3000);
   }
 }
 
@@ -43,9 +43,14 @@ onMounted(() => {
     store.dispatch(constants.LOAD_USERS_ONLINE);
   });
 
+  socket.on('update-users', () => {
+    store.dispatch(constants.LOAD_USERS_ONLINE);
+  });
+
   store.dispatch(constants.LOAD_USERS);
   store.dispatch(constants.LOAD_USERS_ONLINE);
   socket.emit('users-online', currentUser.value.email);
+  socket.emit('users-absent', { email: currentUser.value.email, status: 'online' });
 
   document.addEventListener('visibilitychange', handleVisibilityChange);
   isTabActive.value = !document.hidden;

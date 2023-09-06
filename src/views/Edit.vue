@@ -11,7 +11,7 @@ import { useStore } from 'vuex';
 import { toast } from 'vue3-toastify';
 import { useVuelidate } from '@vuelidate/core';
 import { required, url, minLength } from '@vuelidate/validators';
-import { User } from '@/stories/user/state';
+import { Online, User } from '@/stories/user/state';
 import { constants } from '@/stories/user/constants';
 import { socketConnection } from '@/services/socket-io';
 
@@ -23,9 +23,9 @@ const { id } = route.params;
 const socket = ref();
 
 const user = computed(() => store.state.user as User);
-const usersOnline = computed(() => store.state.usersOnline as string[]);
+const usersOnline = computed(() => store.state.usersOnline as Online[]);
 const currentUser = computed(() => JSON.parse(localStorage.getItem('@user-manager:current-user')!));
-const isValidImage = ref(true);
+const isValidImage = ref(false);
 
 const hasPermissionEditName = ref(true);
 const hasPermissionEditPhotoUrl = ref(true);
@@ -39,20 +39,22 @@ const rules = {
 };
 
 const v$ = useVuelidate(rules, user);
+const userStatus = ref('offline');
 
 onMounted(() => {
   store.dispatch(constants.LOAD_USER, id);
   store.dispatch(constants.LOAD_USERS_ONLINE);
   socket.value = socketConnection();
-  console.log('create');
 });
 
 onUpdated(() => {
+  isValidImage.value = !!user.value.photoUrl;
+  userStatus.value = usersOnline.value.filter((item) => user.value.email === item.email)[0]?.status;
   hasPermissionEditName.value = user.value.role === 'owner' && currentUser.value.role !== 'owner' || currentUser.value.email !== user.value.email && currentUser.value.role === 'employee';
   hasPermissionEditPhotoUrl.value = user.value.role === 'owner' && currentUser.value.role !== 'owner' || currentUser.value.email !== user.value.email && currentUser.value.role === 'employee';
   hasPermissionEditRole.value = user.value.role === 'owner' && currentUser.value.role !== 'owner' || currentUser.value.email !== user.value.email && currentUser.value.role === 'employee';
   isUpdateButtonDisabled.value = user.value.role === 'owner' && currentUser.value.role !== 'owner' || currentUser.value.email !== user.value.email && currentUser.value.role === 'employee';
-  isDeleteButtonDisabled.value = currentUser.value.email === user.value.email || usersOnline.value.includes(user.value.email) || currentUser.value.role === 'employee';
+  isDeleteButtonDisabled.value = currentUser.value.email === user.value.email || userStatus.value === 'online' || userStatus.value === 'absent' || currentUser.value.role === 'employee';
 });
 
 async function hanldeUpdateUserSubmit() {
@@ -143,10 +145,10 @@ function backHome() {
       <h1 class="mb-4 text-5xl font-bold tracking-tight">Edit User</h1>
       <div class="relative flex items-center justify-center w-40 h-40 rounded-full z bg-zinc-800">
 
-        <div :data-online="usersOnline.includes(user.email)"
-          class="absolute z-10 flex items-center justify-center w-8 h-8 border-8 rounded-full right-1 bottom-1 data-[online=true]:bg-emerald-500 bg-rose-500 border-zinc-900">
-          <div :data-online="usersOnline.includes(user.email)"
-            class="absolute inline-flex rounded-full opacity-70 w-full h-full data-[online=true]:animate-ping data-[online=true]:bg-emerald-600 bg-rose-400">
+        <div :data-online="userStatus"
+          class="absolute z-10 flex items-center justify-center w-8 h-8 border-8 rounded-full right-1 bottom-1 data-[online=online]:bg-emerald-500 data-[online=absent]:bg-yellow-500 bg-rose-500 border-zinc-900">
+          <div :data-online="userStatus"
+            class="absolute inline-flex rounded-full opacity-70 w-full h-full data-[online=online]:animate-ping data-[online=absent]:animate-ping data-[online=online]:bg-emerald-500 data-[online=absent]:bg-yellow-500 bg-rose-400">
           </div>
         </div>
 
